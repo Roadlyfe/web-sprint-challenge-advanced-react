@@ -5,8 +5,8 @@ export default class AppClass extends React.Component {
   state = {
     coordinates: [1,1],
     totalMoves: 0,
-    X: 0, 
-    O: 0,
+    // X: 0, 
+    // O: 0,
     board: [
             ["", "", ""],
             ["", "B", ""],
@@ -32,9 +32,10 @@ handleEmailChange = (evt) => {
       steps: this.state.totalMoves, 
       email: this.state.email,
     })
-  .then(res => 
-    console.log(res)
-    ).catch(err => console.log(err, "caught error"))
+  // .then(res => {
+  //   console.log(res)
+  // })
+  // .catch(err => console.log(err, "caught error"))
   }
   
 

@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
+import axios from 'axios';
 
 export default function AppFunctional(props) {
 const [state, setState] = useState({
   coordinates: [1,1],
   totalMoves: 0,
-  X: 0, 
-  O: 0,
+  // X: 0, 
+  // O: 0,
   board: [
           ["", "", ""],
           ["", "B", ""],
@@ -31,9 +32,10 @@ const handleEmailChange = (evt) => {
       steps: state.totalMoves, 
       email: state.email,
     })
-  .then(res => 
-    console.log(res)
-    ).catch(err => console.log(err, "caught error"))
+  // .then(res => {
+  //   console.log(res)
+  // })
+  //   .catch(err => console.log(err, "caught error"))
   }
   
 
