@@ -32,10 +32,13 @@ const handleEmailChange = (evt) => {
       steps: state.totalMoves, 
       email: state.email,
     })
-  // .then(res => {
-  //   console.log(res)
-  // })
-  //   .catch(err => console.log(err, "caught error"))
+    .then(res => {
+      setState({
+        ...state,
+        message: res.data.message,
+      })
+    })
+    .catch(err => console.log(err, "caught error"))
   }
   
 

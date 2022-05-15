@@ -32,10 +32,13 @@ handleEmailChange = (evt) => {
       steps: this.state.totalMoves, 
       email: this.state.email,
     })
-  // .then(res => {
-  //   console.log(res)
-  // })
-  // .catch(err => console.log(err, "caught error"))
+    .then(res => {
+      setState({
+        ...state,
+        message: res.data.message,
+      })
+    })
+    .catch(err => console.log(err, "caught error"))
   }
   
 
@@ -45,7 +48,7 @@ handleEmailChange = (evt) => {
     this.setState({
       ...this.state,
       message: "You can't go right",
-    })
+    })  
   } else {
     let currentCoordinates = this.state.coordinates; 
     currentCoordinates[1] += 1;
