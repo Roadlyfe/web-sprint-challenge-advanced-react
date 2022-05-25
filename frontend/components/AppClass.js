@@ -3,153 +3,187 @@ import axios from 'axios';
 
 export default class AppClass extends React.Component {
   state = {
-    coordinates: [1,1],
     totalMoves: 0,
-    // X: 0, 
-    // O: 0,
-    board: [
-            ["", "", ""],
-            ["", "B", ""],
-            ["", "", ""]
-           ],
+    b: ["","","","","B","","","",""],
     message: "", 
     email: "",
   };
   
-handleEmailChange = (evt) => {
-  this.setState({
-    ...this.state,
-    email: evt.target.value,
-  })
-}
+  handleEmailChange = (evt) => {
+    this.setState({
+      ...this.state,
+      email: evt.target.value,
+    })
+  }
 
   submitForm = (e) => {
     e.preventDefault();
     axios.post("http://localhost:9000/api/result", 
     {
-      x: this.state.coordinates[0], 
-      y: this.state.coordinates[1], 
+      x: this.getCoords()[0], 
+      y: this.getCoords()[1], 
       steps: this.state.totalMoves, 
       email: this.state.email,
     })
     .then(res => {
-      setState({
-        ...state,
+      this.setState({
+        ...this.state,
         message: res.data.message,
+        email: "",
       })
     })
-    .catch(err => console.log(err, "caught error"))
+    .catch(err => {
+      this.setState({
+        ...this.state,
+        message: err.response.data.message,
+        email: ""
+      })
+    })
   }
   
-
-
   moveRight = () => {
-    if(this.state.coordinates[1] >= 2) { 
-    this.setState({
-      ...this.state,
-      message: "You can't go right",
-    })  
-  } else {
-    let currentCoordinates = this.state.coordinates; 
-    currentCoordinates[1] += 1;
-    this.setState({
-      ...this.state, 
-      coordinates: currentCoordinates, 
-      totalMoves: this.state.totalMoves + 1, 
-    })
-   }
+    let currentCoords = this.getCoords()
+    
+    if (currentCoords[0] >= 3) {
+      this.setState({
+        ...this.state,
+        message: "You can't go right",
+      }) 
+    } else {
+      currentCoords[0] += 1
+      this.updateBoard(currentCoords)
+      this.setState({
+        ...this.state,
+        b: this.updateBoard(currentCoords),
+        totalMoves: this.state.totalMoves + 1, 
+      })
+    }
   }
-
+  
   moveLeft = () => {
-    if(this.state.coordinates[1] <= 0) { 
-    this.setState({
-      ...this.state,
-      message: "You can't go left",
-    })
-  } else {
-    let currentCoordinates = this.state.coordinates; 
-    currentCoordinates[1] -= 1;
-    this.setState({
-      ...this.state, 
-      coordinates: currentCoordinates, 
-      totalMoves: this.state.totalMoves + 1, 
-    })
-   }
+    let currentCoords = this.getCoords()
+    if (currentCoords[0] <= 1) {
+      this.setState({
+        ...this.state,
+        message: "You can't go left",
+      }) 
+    } else {
+      currentCoords[0] -= 1
+      this.updateBoard(currentCoords)
+      this.setState({
+        ...this.state,
+        b: this.updateBoard(currentCoords),
+        totalMoves: this.state.totalMoves + 1, 
+      })
+    }
   }
-
+  
   moveUp = () => {
-    if(this.state.coordinates[0] <= 0) { 
-    this.setState({
-      ...this.state,
-      message: "You can't go up",
-    })
-  } else {
-    let currentCoordinates = this.state.coordinates; 
-    currentCoordinates[0] -= 1;
-    this.setState({
-      ...this.state, 
-      coordinates: currentCoordinates, 
-      totalMoves: this.state.totalMoves + 1, 
-    })
-   }
+    let currentCoords = this.getCoords()
+    if (currentCoords[1] <= 1) {
+     this.setState({
+       ...this.state,
+       message: "You can't go up",
+     })
+    } else {
+      currentCoords[1] -= 1
+      this.updateBoard(currentCoords)
+      this.setState({
+       ...this.state,
+       b: this.updateBoard(currentCoords),
+       totalMoves: this.state.totalMoves + 1, 
+     })
+    }
   }
-
+  
   moveDown = () => {
-    if(this.state.coordinates[0] >= 2) { 
-    this.setState({
-      ...this.state,
-      message: "You can't go down",
-    })
-  } else {
-    let currentCoordinates = this.state.coordinates; 
-    currentCoordinates[0] += 1;
-    this.setState({
-      ...this.state, 
-      coordinates: currentCoordinates, 
-      totalMoves: this.state.totalMoves + 1, 
-    })
-   }
+    let currentCoords = this.getCoords()
+    if (currentCoords[1] >= 3) {
+      this.setState({
+        ...this.state,
+        message: "You can't go down",
+      })
+    } else {
+      currentCoords[1] += 1
+      this.setState({
+        ...this.state,
+        b: this.updateBoard(currentCoords),
+        totalMoves: this.state.totalMoves + 1, 
+      })
+    }
   }
-
+  
   reset = () => {
     this.setState({
-      coordinates: [1,1],
       totalMoves: 0,
-      X: 0, 
-      O: 0,
-      board: [
-              ["", "", ""],
-              ["", "B", ""],
-              ["", "", ""]
-             ],
-      message: '', 
+      b: ["","","","","B","","","",""],
+      message: "", 
+      email: "",
     })
   }
-
+  
+  updateBoard = (pair) => {
+    let coords = [
+      [1,1], [2,1], [3,1],
+      [1,2], [2,2], [3,2],
+      [1,3], [2,3], [3,3],
+    ]
+  
+    let i = coords.indexOf(pair)
+    let newBoard = coords.map((item) => {
+      if (item[0] == pair[0] && item[1] == pair[1]) {
+        return "B"
+      } else {
+        return ""
+      }
+    })
+    return newBoard;
+  }
+  
+  
+  makeBoard = () => {
+    let key = 0;
+    return this.state.b.map((item) => {
+      if (item != "") {
+        return <div key={key+=1} className="active square">B</div>
+      } else {
+        return (
+          <div key={key+=1} className="square"></div>
+        )
+      }
+    })
+  }
+  
+  getCoords = () => {
+    let coords = [
+      [1,1], [2,1], [3,1],
+      [1,2], [2,2], [3,2],
+      [1,3], [2,3], [3,3],
+    ]
+  
+    let i = this.state.b.indexOf("B")
+    return coords[i]
+  }
+  
+  movesMessage = () => {
+    if (this.state.totalMoves === 1) {
+      return `You moved ${this.state.totalMoves} time`
+    } else {
+      return  `You moved ${this.state.totalMoves} times`
+    }
+  }
 
   render() {
     const { className } = this.props
-    let newBoard = [];
+
     return (
       <div id="wrapper" className={className}>
         <div className="info">
-          <h3 id="coordinates">Coordinates ({this.state.coordinates[0]}, {this.state.coordinates[1]})</h3>
-          <h3 id="steps">You moved {this.state.totalMoves} times</h3>
+        <h3 id="coordinates">Coordinates ({this.getCoords()[0]}, {this.getCoords()[1]})</h3>
+          <h3 id="steps">{this.movesMessage()}</h3>
         </div>
         <div id="grid">
-      { this.state.board.map((item, Yindex) => {
-        return (
-           item.map((subitem, Xindex) => {
-            if (Yindex == this.state.coordinates[0] && Xindex == this.state.coordinates[1]) {
-              return <div key={Yindex + Xindex} className="square">B</div>
-             } else {
-              return (
-                <div key={Yindex + Xindex} className="square"> {""}</div>
-              )
-             }
-            })
-           )}
-      )}
+      {this.makeBoard()}
           </div>
         <div className="info">
           <h3 id="message">{this.state.message}</h3>
@@ -175,4 +209,3 @@ handleEmailChange = (evt) => {
     )
   }
 }
-
